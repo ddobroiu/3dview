@@ -1,14 +1,44 @@
 "use client";
 
-export default function ModelViewer({ url }: { url: string }) {
-  if (!url) return null;
-  // placeholder simplu: arată linkul către modelul 3D (îl îmbunătățim ulterior)
+import { useEffect, useRef } from "react";
+
+type Props = { url?: string; height?: number };
+
+export default function ModelViewer({ url = "", height = 360 }: Props) {
+  const hostRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!hostRef.current) return;
+
+    // ❗️creeăm elementul DOAR pe client
+    const el = document.createElement("model-viewer");
+    el.setAttribute("src", url);
+    el.setAttribute("camera-controls", "");
+    el.setAttribute("shadow-intensity", "1");
+    el.style.width = "100%";
+    el.style.height = `${height}px`;
+
+    // atașăm
+    hostRef.current.appendChild(el);
+
+    // cleanup SIGUR (nu mai dă removeChild pe nod greșit)
+    return () => {
+      if (hostRef.current && el.parentNode === hostRef.current) {
+        hostRef.current.removeChild(el);
+      }
+    };
+  }, [url, height]);
+
   return (
-    <div className="rounded-xl border p-4">
-      <p className="mb-2 text-sm opacity-80">Model 3D generat:</p>
-      <a href={url} target="_blank" rel="noreferrer" className="underline">
-        Deschide modelul 3D
-      </a>
-    </div>
+    <div
+      ref={hostRef}
+      style={{
+        width: "100%",
+        height,
+        borderRadius: 12,
+        overflow: "hidden",
+        background: "rgba(255,255,255,0.06)",
+      }}
+    />
   );
 }
