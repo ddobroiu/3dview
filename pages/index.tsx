@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Head from "next/head";
 import dynamic from "next/dynamic";
 import { FaDownload, FaExclamationTriangle, FaImage, FaTimes } from "react-icons/fa";
@@ -8,18 +8,7 @@ import { FaDownload, FaExclamationTriangle, FaImage, FaTimes } from "react-icons
 // ✅ ModelViewer este în pages/components/
 const ModelViewer = dynamic(() => import("./components/ModelViewer"), { ssr: false });
 
-// ✅ Sliderul devine client-only prin importuri dinamice
-const CompareSlider = dynamic(
-  () => import("react-compare-slider").then((m) => m.ReactCompareSlider),
-  { ssr: false }
-);
-const CompareSliderImage = dynamic(
-  () => import("react-compare-slider").then((m) => m.ReactCompareSliderImage),
-  { ssr: false }
-);
-
-export default function HomePage() {
-  const [mounted, setMounted] = useState(false); // randăm sliderul doar pe client
+function Page() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [originalPreview, setOriginalPreview] = useState<string | null>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
@@ -27,17 +16,19 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [history, setHistory] = useState<
-    { image: string; video?: string; model?: string; date: string }[]
+    { image: string; video?: string | null; model?: string | null; date: string }[]
   >([]);
   const [modalModel, setModalModel] = useState<string | null>(null);
+
+  // Before/After slider (fără librărie, deci zero probleme la hidratare)
+  const [reveal, setReveal] = useState(50); // procent din lățime
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   const glass = "bg-white/80 dark:bg-[#151a23]/70 backdrop-blur-xl";
   const border = "border border-slate-200 dark:border-[#23263a]";
   const rounded = "rounded-2xl";
   const gradientBtn =
     "bg-gradient-to-r from-blue-600 via-blue-500 to-purple-700 hover:from-blue-700 hover:to-purple-800 shadow-xl transition";
-
-  useEffect(() => setMounted(true), []);
 
   const showError = (msg: string) => {
     setErrorMsg(msg);
@@ -50,6 +41,7 @@ export default function HomePage() {
       showError("Încarcă o imagine înainte de generare.");
       return;
     }
+
     setErrorMsg(null);
     setLoading(true);
     setVideoUrl(null);
@@ -99,11 +91,37 @@ export default function HomePage() {
     }).catch(() => {});
   };
 
+  // Drag pe container pentru slider (opțional, pe lângă input range)
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const onDown = (e: PointerEvent) => {
+      const rect = el.getBoundingClientRect();
+      const move = (ev: PointerEvent) => {
+        const x = Math.min(Math.max(ev.clientX - rect.left, 0), rect.width);
+        setReveal(Math.round((x / rect.width) * 100));
+      };
+      const up = () => {
+        window.removeEventListener("pointermove", move);
+        window.removeEventListener("pointerup", up);
+      };
+      window.addEventListener("pointermove", move);
+      window.addEventListener("pointerup", up);
+    };
+
+    el.addEventListener("pointerdown", onDown);
+    return () => el.removeEventListener("pointerdown", onDown);
+  }, []);
+
   return (
     <>
       <Head>
         <title>Randări 3D AI | Imagine ➜ Model 3D + Video</title>
-        <meta name="description" content="Generează model 3D și video dintr-o imagine. Previzualizare, slider, istoric și descărcare." />
+        <meta
+          name="description"
+          content="Generează model 3D și video dintr-o imagine. Previzualizare, slider, istoric și descărcare."
+        />
       </Head>
 
       <main className="min-h-screen py-10 px-3 sm:px-6 md:px-12 bg-[#0b0f19] text-white font-sans">
@@ -138,7 +156,11 @@ export default function HomePage() {
                 className="hidden"
               />
               {originalPreview && (
-                <img src={originalPreview} alt="Previzualizare" className="absolute w-24 h-16 rounded-md shadow top-3 right-3 object-cover border-2 border-white" />
+                <img
+                  src={originalPreview}
+                  alt="Previzualizare"
+                  className="absolute w-24 h-16 rounded-md shadow top-3 right-3 object-cover border-2 border-white"
+                />
               )}
             </label>
 
@@ -147,7 +169,11 @@ export default function HomePage() {
               disabled={loading}
               className={`w-full flex justify-center items-center gap-2 py-3 text-base font-semibold ${gradientBtn} ${rounded} hover:scale-105`}
             >
-              {loading ? <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <>Generează 3D + Video</>}
+              {loading ? (
+                <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <>Generează 3D + Video</>
+              )}
             </button>
           </form>
 
@@ -159,25 +185,52 @@ export default function HomePage() {
 
             {loading && <div className="text-center text-lg animate-pulse">⏳ Se generează rezultatul...</div>}
 
-            {/* ✅ Slider randat doar pe client pentru a evita eroarea removeChild */}
-            {!loading && mounted && originalPreview && videoUrl && (
-              <CompareSlider
-                key={`${originalPreview}-${videoUrl}`}
-                itemOne={<CompareSliderImage src={originalPreview} alt="Inițială" />}
-                itemTwo={
+            {/* Before/After custom (fără librărie) */}
+            {!loading && originalPreview && videoUrl && (
+              <div
+                className="relative w-full max-w-full mx-auto rounded-xl overflow-hidden shadow-lg select-none"
+                style={{ height: 300 }}
+                ref={containerRef}
+              >
+                {/* baza = imaginea inițială */}
+                <img
+                  src={originalPreview}
+                  alt="Inițial"
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                {/* overlay = video generat, decupat pe lățime */}
+                <div className="absolute inset-0 overflow-hidden" style={{ width: `${reveal}%` }}>
                   <video
                     src={videoUrl}
                     controls
-                    style={{ objectFit: "cover", height: 300, width: "100%" }}
+                    className="w-full h-full object-cover"
                     poster={originalPreview || undefined}
                   />
-                }
-                className="rounded-xl shadow-lg"
-              />
+                </div>
+
+                {/* mâner + input range */}
+                <div
+                  className="absolute top-0 bottom-0 border-l-2 border-white/70"
+                  style={{ left: `calc(${reveal}% - 1px)` }}
+                />
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={reveal}
+                  onChange={(e) => setReveal(Number(e.target.value))}
+                  className="absolute left-0 right-0 bottom-2 mx-4"
+                  aria-label="Compară înainte/după"
+                />
+              </div>
             )}
 
             {!loading && !videoUrl && originalPreview && (
-              <img src={originalPreview} alt="Imagine încărcată" className="w-full rounded-lg shadow-lg object-contain max-h-[480px]" />
+              <img
+                src={originalPreview}
+                alt="Imagine încărcată"
+                className="w-full rounded-lg shadow-lg object-contain max-h-[480px]"
+              />
             )}
 
             {videoUrl && (
@@ -272,3 +325,6 @@ export default function HomePage() {
     </>
   );
 }
+
+// ⛑️ Forțăm întreaga pagină să fie client-only (fără SSR/hidratare)
+export default dynamic(() => Promise.resolve(Page), { ssr: false });
