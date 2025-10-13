@@ -74,8 +74,9 @@ function Page() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ record }),
       }).catch(() => {});
-    } catch (err: any) {
-      showError(err.message || "Eroare necunoscută.");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      showError(message || "Eroare necunoscută.");
     } finally {
       setLoading(false);
     }
@@ -96,7 +97,7 @@ function Page() {
     const el = containerRef.current;
     if (!el) return;
 
-    const onDown = (e: PointerEvent) => {
+    const onDown = (_e: PointerEvent) => {
       const rect = el.getBoundingClientRect();
       const move = (ev: PointerEvent) => {
         const x = Math.min(Math.max(ev.clientX - rect.left, 0), rect.width);
@@ -141,7 +142,7 @@ function Page() {
 
             <label
               htmlFor="upload-image"
-              className={`group flex flex-col items-center justify-center min-h-[120px] border-2 border-dashed border-slate-300 dark:border-[#37405a] ${rounded} cursor-pointer hover:border-blue-500 transition bg-slate-50/50 dark:bg-[#161b27]/40 relative`}
+              className={`group flex flex-col items-center justify-center min-h-[120px] border-2 border-dashed border-slate-300 dark:border-[#37405a] ${rounded} cursor-pointer hover:border-blue-5[...]
             >
               <FaImage size={34} className="text-blue-500 group-hover:scale-110 transition mb-2" />
               <span className="text-sm text-slate-300">Trage o imagine aici sau apasă pentru a încărca</span>

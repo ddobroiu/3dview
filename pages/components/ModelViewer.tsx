@@ -8,7 +8,8 @@ export default function ModelViewer({ url = "", height = 360 }: Props) {
   const hostRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (!hostRef.current) return;
+    const host = hostRef.current;
+    if (!host) return;
 
     // ❗️creeăm elementul DOAR pe client
     const el = document.createElement("model-viewer");
@@ -19,12 +20,12 @@ export default function ModelViewer({ url = "", height = 360 }: Props) {
     el.style.height = `${height}px`;
 
     // atașăm
-    hostRef.current.appendChild(el);
+    host.appendChild(el);
 
-    // cleanup SIGUR (nu mai dă removeChild pe nod greșit)
+    // cleanup SIGUR (folosim 'host' capturat)
     return () => {
-      if (hostRef.current && el.parentNode === hostRef.current) {
-        hostRef.current.removeChild(el);
+      if (host && host.contains(el)) {
+        host.removeChild(el);
       }
     };
   }, [url, height]);
