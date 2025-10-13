@@ -142,7 +142,7 @@ function Page() {
 
             <label
               htmlFor="upload-image"
-              className={`group flex flex-col items-center justify-center min-h-[120px] border-2 border-dashed border-slate-300 dark:border-[#37405a] ${rounded} cursor-pointer hover:border-blue-5[...]
+              className={`group flex flex-col items-center justify-center min-h-[120px] border-2 border-dashed border-slate-300 dark:border-[#37405a] ${rounded} cursor-pointer hover:border-blue-500`}
             >
               <FaImage size={34} className="text-blue-500 group-hover:scale-110 transition mb-2" />
               <span className="text-sm text-slate-300">Trage o imagine aici sau apasă pentru a încărca</span>
