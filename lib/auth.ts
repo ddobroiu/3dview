@@ -1,0 +1,22 @@
+import jwt from "jsonwebtoken";
+
+const JWT_SECRET = process.env.JWT_SECRET || "dev_secret_change_me";
+
+export type JWTPayload = {
+  id: string;
+  username: string;
+  email?: string;
+};
+
+export function signToken(payload: JWTPayload, expiresIn = "7d") {
+  return jwt.sign(payload, JWT_SECRET, { expiresIn });
+}
+
+export function verifyToken(token: string): JWTPayload | null {
+  try {
+    const data = jwt.verify(token, JWT_SECRET) as JWTPayload;
+    return data;
+  } catch (err) {
+    return null;
+  }
+}

@@ -11,7 +11,7 @@ export default function ModelViewer({ url = "", height = 360 }: Props) {
     const host = hostRef.current;
     if (!host) return;
 
-    // creeăm elementul DOAR pe client
+    // creeăm elementul doar pe client
     const el = document.createElement("model-viewer");
     el.setAttribute("src", url);
     el.setAttribute("camera-controls", "");
@@ -19,10 +19,8 @@ export default function ModelViewer({ url = "", height = 360 }: Props) {
     el.style.width = "100%";
     el.style.height = `${height}px`;
 
-    // atașăm
     host.appendChild(el);
 
-    // cleanup folosind 'host' capturat
     return () => {
       if (host && host.contains(el)) {
         host.removeChild(el);
