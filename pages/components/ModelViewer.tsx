@@ -11,7 +11,7 @@ export default function ModelViewer({ url = "", height = 360 }: Props) {
     const host = hostRef.current;
     if (!host) return;
 
-    // ❗️creeăm elementul DOAR pe client
+    // creeăm elementul DOAR pe client
     const el = document.createElement("model-viewer");
     el.setAttribute("src", url);
     el.setAttribute("camera-controls", "");
@@ -22,7 +22,7 @@ export default function ModelViewer({ url = "", height = 360 }: Props) {
     // atașăm
     host.appendChild(el);
 
-    // cleanup SIGUR (folosim 'host' capturat)
+    // cleanup folosind 'host' capturat
     return () => {
       if (host && host.contains(el)) {
         host.removeChild(el);

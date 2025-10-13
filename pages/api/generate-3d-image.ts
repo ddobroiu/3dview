@@ -7,7 +7,7 @@ const replicate = new Replicate({
 
 export const config = {
   api: {
-    bodyParser: false, // important pentru upload imagine
+    bodyParser: false,
   },
 };
 
@@ -17,10 +17,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(405).json({ error: "Method not allowed" });
     }
 
-    // Am eliminat citirea rawBody deoarece nu era folosită — dacă ai nevoie să parsezi FormData pe server,
-    // folosește 'formidable' sau 'busboy' (sau lasă bodyParser activ pentru small uploads).
+    // Nu citim rawBody aici dacă nu îl folosești; folosește formidable/busboy dacă vrei upload server-side.
 
-    // Rulează modelul kwaivgi/kling-v2.1 (text-to-video din imagine)
     const output: unknown = await replicate.run("kwaivgi/kling-v2.1", {
       input: {
         prompt: "Imagine randată 3D profesională din fotografie reală",
@@ -31,7 +29,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       },
     });
 
-    // Normalizează output-ul într-un string (sau array)
     let videoUrl: string | undefined;
     if (Array.isArray(output) && output.length > 0 && typeof output[0] === "string") {
       videoUrl = output[0];
