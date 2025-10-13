@@ -1,0 +1,41 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 String   @id @default(cuid())
+  username           String   @unique
+  email              String   @unique
+  passwordHash       String
+  createdAt          DateTime @default(now())
+  emailVerified      DateTime?
+  // opțional: alte câmpuri (credits, avatar, etc.)
+}
+
+model VerificationToken {
+  id         String   @id @default(cuid())
+  identifier String   // user email
+  token      String   @unique
+  expires    DateTime
+  createdAt  DateTime @default(now())
+
+  @@index([identifier])
+  @@index([token])
+}
+
+model PasswordResetToken {
+  id         String   @id @default(cuid())
+  identifier String   // user email
+  token      String   @unique
+  expires    DateTime
+  createdAt  DateTime @default(now())
+
+  @@index([identifier])
+  @@index([token])
+}

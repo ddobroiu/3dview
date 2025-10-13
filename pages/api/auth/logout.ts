@@ -2,8 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import cookie from "cookie";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Sterge cookie-ul
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   res.setHeader(
     "Set-Cookie",
     cookie.serialize("token", "", {
@@ -11,8 +10,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       path: "/",
-      expires: new Date(0),
+      maxAge: 0,
     })
   );
-  res.status(200).json({ ok: true });
+  return res.status(200).json({ ok: true });
 }
