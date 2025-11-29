@@ -28,6 +28,11 @@ export async function sendVerificationEmail(to: string, token: string) {
 }
 
 export async function sendPasswordResetEmail(to: string, token: string) {
+  if (!resend) {
+    console.log("Resend not configured, skipping password reset email");
+    return;
+  }
+
   const base = process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/+$/,"") || "http://localhost:3000";
   const url = `${base}/reset-password?token=${encodeURIComponent(token)}`;
 
