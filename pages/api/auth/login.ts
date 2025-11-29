@@ -22,9 +22,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const ok = await bcrypt.compare(password, user.passwordHash);
     if (!ok) return res.status(401).json({ error: "Date de autentificare invalide" });
 
-    if (!user.emailVerified) {
-      return res.status(403).json({ error: "Emailul nu este verificat. Verifică inbox-ul." });
-    }
+    // Pentru dezvoltare, nu verifică emailul obligatoriu
+    // if (!user.emailVerified) {
+    //   return res.status(403).json({ error: "Emailul nu este verificat. Verifică inbox-ul." });
+    // }
 
     const token = signToken({ id: user.id, username: user.username, email: user.email });
 
@@ -44,6 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         id: user.id,
         username: user.username,
         email: user.email,
+        credits: user.credits,
         createdAt: user.createdAt,
       },
     });

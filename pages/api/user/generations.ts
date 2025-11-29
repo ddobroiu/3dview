@@ -10,8 +10,8 @@ async function getUserFromToken(req: NextApiRequest): Promise<{ id: string } | n
     
     if (!token) return null;
     
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret') as { userId: string };
-    return { id: decoded.userId };
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret') as { id: string };
+    return { id: decoded.id };
   } catch {
     return null;
   }

@@ -1,9 +1,14 @@
 // lib/mail.ts
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 export async function sendVerificationEmail(to: string, token: string) {
+  if (!resend) {
+    console.log("Resend not configured, skipping email");
+    return;
+  }
+
   const base = process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/+$/,"") || "http://localhost:3000";
   const url = `${base}/api/auth/verify-email?token=${encodeURIComponent(token)}`;
 

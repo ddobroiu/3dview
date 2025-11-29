@@ -26,12 +26,18 @@ export default function AuthForm({ redirectTo = "/" }: Props) {
         ? { username: username || undefined, email: email || undefined, password }
         : { username, email, password };
 
+      console.log("AuthForm - Sending request to:", url);
+      console.log("AuthForm - Body:", body);
+      
       const res = await fetch(url, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(body),
       });
       const data = await res.json();
+      
+      console.log("AuthForm - Response status:", res.status);
+      console.log("AuthForm - Response data:", data);
       if (!res.ok) {
         setError(data.error || "Eroare");
       } else {
