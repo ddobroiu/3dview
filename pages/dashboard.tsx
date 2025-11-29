@@ -6,6 +6,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ImageUploader from "../components/ImageUploader";
 import dynamic from "next/dynamic";
+import { CREDIT_PACKAGES } from "../lib/credit-packages";
 import { 
   FaCoins, 
   FaHistory, 
@@ -535,12 +536,7 @@ export default function Dashboard() {
               <div className={`${glass} ${border} ${rounded} p-6`}>
                 <h3 className="text-xl font-semibold mb-6">Cumpără credite</h3>
                 <div className="space-y-4">
-                  {[
-                    { name: 'Starter Pack', credits: 50, price: 19.99, bonus: 5 },
-                    { name: 'Popular Pack', credits: 150, price: 49.99, bonus: 25, popular: true },
-                    { name: 'Pro Pack', credits: 500, price: 149.99, bonus: 100 },
-                    { name: 'Ultimate Pack', credits: 1500, price: 399.99, bonus: 500 },
-                  ].map((pack) => (
+                  {CREDIT_PACKAGES.map((pack) => (
                     <div 
                       key={pack.name} 
                       className={`border rounded-lg p-4 ${pack.popular ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700'}`}
@@ -549,11 +545,11 @@ export default function Dashboard() {
                         <div>
                           <h4 className="font-semibold">{pack.name}</h4>
                           <p className="text-sm text-gray-600 dark:text-gray-400">
-                            {pack.credits} credite + {pack.bonus} bonus
+                            {pack.credits} credite {pack.bonus && pack.bonus > 0 && ` + ${pack.bonus} bonus`}
                           </p>
                         </div>
                         <div className="text-right">
-                          <p className="text-lg font-bold">{pack.price} RON</p>
+                          <p className="text-lg font-bold">${pack.price}</p>
                           <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm transition-colors">
                             Cumpără
                           </button>

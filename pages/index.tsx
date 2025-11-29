@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { FaDownload, FaExclamationTriangle, FaImage, FaTimes, FaRocket, FaCube, FaCog } from "react-icons/fa";
+import { CREDIT_PACKAGES } from "../lib/credit-packages";
 
 // ModelViewer moved to components/
 const ModelViewer = dynamic(() => import("../components/ModelViewer"), { ssr: false });
@@ -410,58 +411,43 @@ function Page() {
             </div>
             
             <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-              <div className="p-8 bg-gradient-to-br from-gray-900/30 to-black/30 backdrop-blur-xl border border-white/10 rounded-3xl">
-                <h3 className="text-2xl font-bold text-white mb-2">Starter</h3>
-                <div className="text-4xl font-bold text-blue-400 mb-6">
-                  $9 <span className="text-lg text-gray-400">/ 10 credits</span>
-                </div>
-                <ul className="space-y-3 text-gray-300 mb-8">
-                  <li>✓ 10 3D Generations</li>
-                  <li>✓ HD Video Output</li>
-                  <li>✓ Standard Processing</li>
-                  <li>✓ Download Rights</li>
-                </ul>
-                <button className="w-full py-3 px-6 bg-blue-600 hover:bg-blue-700 rounded-xl font-semibold transition-colors">
-                  Get Started
-                </button>
-              </div>
-              
-              <div className="relative p-8 bg-gradient-to-br from-purple-900/50 to-pink-900/30 backdrop-blur-xl border-2 border-purple-500/50 rounded-3xl transform scale-105">
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full text-sm font-bold">
-                  Most Popular
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-2">Professional</h3>
-                <div className="text-4xl font-bold text-purple-400 mb-6">
-                  $29 <span className="text-lg text-gray-400">/ 50 credits</span>
-                </div>
-                <ul className="space-y-3 text-gray-300 mb-8">
-                  <li>✓ 50 3D Generations</li>
-                  <li>✓ 4K Video Output</li>
-                  <li>✓ Priority Processing</li>
-                  <li>✓ Commercial License</li>
-                  <li>✓ Email Support</li>
-                </ul>
-                <button className="w-full py-3 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-xl font-semibold transition-all">
-                  Choose Pro
-                </button>
-              </div>
-              
-              <div className="p-8 bg-gradient-to-br from-gray-900/30 to-black/30 backdrop-blur-xl border border-white/10 rounded-3xl">
-                <h3 className="text-2xl font-bold text-white mb-2">Enterprise</h3>
-                <div className="text-4xl font-bold text-pink-400 mb-6">
-                  $99 <span className="text-lg text-gray-400">/ 250 credits</span>
-                </div>
-                <ul className="space-y-3 text-gray-300 mb-8">
-                  <li>✓ 250 3D Generations</li>
-                  <li>✓ 8K Video Output</li>
-                  <li>✓ Instant Processing</li>
-                  <li>✓ API Access</li>
-                  <li>✓ Priority Support</li>
-                </ul>
-                <button className="w-full py-3 px-6 bg-pink-600 hover:bg-pink-700 rounded-xl font-semibold transition-colors">
-                  Go Enterprise
-                </button>
-              </div>
+              {CREDIT_PACKAGES.filter(pkg => pkg.id !== 'ultimate').map((pkg, index) => {
+                const colors = [
+                  { bg: 'from-gray-900/30 to-black/30', text: 'text-blue-400', button: 'bg-blue-600 hover:bg-blue-700' },
+                  { bg: 'from-purple-900/50 to-pink-900/30', text: 'text-purple-400', button: 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700' },
+                  { bg: 'from-gray-900/30 to-black/30', text: 'text-pink-400', button: 'bg-pink-600 hover:bg-pink-700' }
+                ];
+                const color = colors[index] || colors[0];
+                
+                return (
+                  <div 
+                    key={pkg.id} 
+                    className={`relative p-8 bg-gradient-to-br ${color.bg} backdrop-blur-xl border ${pkg.popular ? 'border-2 border-purple-500/50 transform scale-105' : 'border-white/10'} rounded-3xl`}
+                  >
+                    {pkg.popular && (
+                      <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full text-sm font-bold">
+                        Most Popular
+                      </div>
+                    )}
+                    <h3 className="text-2xl font-bold text-white mb-2">{pkg.name}</h3>
+                    <div className={`text-4xl font-bold ${color.text} mb-6`}>
+                      ${pkg.price} <span className="text-lg text-gray-400">/ {pkg.credits} credits</span>
+                      {pkg.bonus && <div className="text-lg text-green-400">+ {pkg.bonus} bonus</div>}
+                    </div>
+                    <ul className="space-y-3 text-gray-300 mb-8">
+                      {pkg.features.map((feature, idx) => (
+                        <li key={idx}>✓ {feature}</li>
+                      ))}
+                    </ul>
+                    <a 
+                      href="/dashboard" 
+                      className={`block w-full py-3 px-6 ${color.button} rounded-xl font-semibold transition-all text-center text-white`}
+                    >
+                      {pkg.id === 'starter' ? 'Get Started' : pkg.id === 'professional' ? 'Choose Pro' : 'Go Enterprise'}
+                    </a>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </section>

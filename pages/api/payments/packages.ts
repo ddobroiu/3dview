@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "../../../lib/db";
+import { CREDIT_PACKAGES } from "../../../lib/credit-packages";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "GET") {
@@ -7,19 +7,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const packages = await prisma.creditPackage.findMany({
-      where: { active: true },
-      orderBy: { credits: 'asc' },
-      select: {
-        id: true,
-        name: true,
-        credits: true,
-        price: true,
-        currency: true,
-        popular: true,
-        bonus: true,
-      },
-    });
+    // Return standardized credit packages
+    const packages = CREDIT_PACKAGES.map(pkg => ({
+      id: pkg.id,
+      name: pkg.name,
+      credits: pkg.credits,
+      price: pkg.price,
+      currency: 'USD',
+      popular: pkg.popular || false,
+      bonus: pkg.bonus || 0,
+      features: pkg.features,
+      stripePriceId: pkg.stripePriceId
+    }));
 
     return res.status(200).json({ packages });
   } catch (error) {
