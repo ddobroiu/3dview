@@ -63,10 +63,51 @@ export default function Dashboard() {
   const border = "border border-slate-200 dark:border-[#23263a]";
   const rounded = "rounded-2xl";
 
-  const qualityOptions = {
-    STANDARD: { name: 'Standard', credits: 1, time: '~30s', description: 'Calitate bună pentru previzualizare' },
-    HIGH: { name: 'High Quality', credits: 2, time: '~60s', description: 'Calitate superioară pentru rezultate profesionale' },
-    ULTRA: { name: 'Ultra Quality', credits: 5, time: '~120s', description: 'Cea mai înaltă calitate disponibilă' },
+  const aiProviders = {
+    meshy: { name: 'Meshy AI', description: 'Rapid și accesibil', logo: '🎯' },
+    luma: { name: 'Luma AI', description: 'Calitate premium', logo: '⭐' },
+    tripo: { name: 'Tripo AI', description: 'Cel mai rapid', logo: '⚡' },
+    stability: { name: 'Stability AI', description: 'Enterprise grade', logo: '🏢' }
+  };
+
+  const getQualityOptions = (provider: string) => {
+    const costs = {
+      meshy: { STANDARD: 1, HIGH: 2, ULTRA: 3 },
+      luma: { STANDARD: 1, HIGH: 3, ULTRA: 5 },
+      tripo: { STANDARD: 1, HIGH: 2, ULTRA: 3 },
+      stability: { STANDARD: 2, HIGH: 3, ULTRA: 4 }
+    };
+    
+    const times = {
+      meshy: { STANDARD: '~2-4min', HIGH: '~4-6min', ULTRA: '~6-10min' },
+      luma: { STANDARD: '~3-5min', HIGH: '~5-8min', ULTRA: '~8-12min' },
+      tripo: { STANDARD: '~30-60s', HIGH: '~1-2min', ULTRA: '~2-3min' },
+      stability: { STANDARD: '~2-3min', HIGH: '~4-6min', ULTRA: '~6-8min' }
+    };
+
+    const providerCosts = costs[provider as keyof typeof costs] || costs.meshy;
+    const providerTimes = times[provider as keyof typeof times] || times.meshy;
+
+    return {
+      STANDARD: { 
+        name: 'Standard', 
+        credits: providerCosts.STANDARD, 
+        time: providerTimes.STANDARD, 
+        description: 'Calitate bună pentru previzualizare' 
+      },
+      HIGH: { 
+        name: 'High Quality', 
+        credits: providerCosts.HIGH, 
+        time: providerTimes.HIGH, 
+        description: 'Calitate superioară pentru rezultate profesionale' 
+      },
+      ULTRA: { 
+        name: 'Ultra Quality', 
+        credits: providerCosts.ULTRA, 
+        time: providerTimes.ULTRA, 
+        description: 'Cea mai înaltă calitate disponibilă' 
+      },
+    };
   };
 
   useEffect(() => {
