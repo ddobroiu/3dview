@@ -550,9 +550,12 @@ export default function Dashboard() {
                         </div>
                         <div className="text-right">
                           <p className="text-lg font-bold">${pack.price}</p>
-                          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm transition-colors">
+                          <a 
+                            href="/purchase-credits" 
+                            className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm transition-colors text-center"
+                          >
                             Cumpără
-                          </button>
+                          </a>
                         </div>
                       </div>
                     </div>

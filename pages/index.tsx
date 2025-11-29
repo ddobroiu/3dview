@@ -440,7 +440,7 @@ function Page() {
                       ))}
                     </ul>
                     <a 
-                      href="/dashboard" 
+                      href="/purchase-credits" 
                       className={`block w-full py-3 px-6 ${color.button} rounded-xl font-semibold transition-all text-center text-white`}
                     >
                       {pkg.id === 'starter' ? 'Get Started' : pkg.id === 'professional' ? 'Choose Pro' : 'Go Enterprise'}
