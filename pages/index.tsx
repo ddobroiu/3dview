@@ -5,7 +5,7 @@ import Head from "next/head";
 import dynamic from "next/dynamic";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { FaDownload, FaExclamationTriangle, FaImage, FaTimes } from "react-icons/fa";
+import { FaDownload, FaExclamationTriangle, FaImage, FaTimes, FaRocket, FaCube, FaCog } from "react-icons/fa";
 
 // ModelViewer moved to components/
 const ModelViewer = dynamic(() => import("../components/ModelViewer"), { ssr: false });
@@ -124,77 +124,347 @@ function Page() {
 
       <Header />
 
-      <main className="min-h-screen py-10 px-3 sm:px-6 md:px-12 bg-[#0b0f19] text-white font-sans">
-        {errorMsg && (
-          <div className="max-w-3xl mx-auto mb-5 flex items-center justify-center gap-2 bg-red-900/70 text-red-200 border border-red-800 px-6 py-3 rounded-xl shadow-md">
-            <FaExclamationTriangle /> {errorMsg}
+      <main className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-white overflow-hidden">
+        {/* Hero Section */}
+        <section className="relative pt-32 pb-20 px-4">
+          {/* Animated Background */}
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute top-20 left-1/4 w-72 h-72 bg-blue-500/30 rounded-full blur-3xl animate-pulse" />
+            <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse" />
+            <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-pink-500/20 rounded-full blur-3xl animate-pulse" />
           </div>
-        )}
 
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8">
-          <form onSubmit={handleSubmit} className={`${glass} ${border} ${rounded} p-8 shadow-2xl flex flex-col gap-6`} noValidate>
-            <h1 className="text-3xl font-bold text-center bg-gradient-to-r from-blue-400 via-purple-400 to-purple-700 bg-clip-text text-transparent">
-              Imagine ➔ Model 3D + Video
+          <div className="relative max-w-7xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full border border-white/10 mb-8">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+              <span className="text-sm text-gray-300">🚀 AI-Powered 3D Generation</span>
+            </div>
+            
+            <h1 className="text-6xl md:text-8xl font-bold mb-6 leading-tight">
+              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Transform
+              </span>
+              <br />
+              <span className="text-white">
+                Images to 3D
+              </span>
             </h1>
+            
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto mb-12 leading-relaxed">
+              Upload any image and watch our AI create stunning 3D models and videos in seconds. 
+              No technical skills required – just pure creative magic.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+              <button 
+                onClick={() => document.getElementById('upload-section')?.scrollIntoView({ behavior: 'smooth' })}
+                className="group px-8 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-2xl font-bold text-lg shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 hover:scale-105 flex items-center gap-3"
+              >
+                <FaRocket className="group-hover:animate-bounce" />
+                Start Creating Now
+              </button>
+              <button className="px-8 py-4 border border-white/20 rounded-2xl font-semibold hover:bg-white/5 transition-all duration-300 flex items-center gap-3">
+                <FaImage />
+                View Examples
+              </button>
+            </div>
+          </div>
+        </section>
 
-            <label
-              htmlFor="upload-image"
-              className={`group flex flex-col items-center justify-center min-h-[120px] border-2 border-dashed border-slate-300 dark:border-[#37405a] ${rounded} cursor-pointer hover:border-blue-500`}
-            >
-              <FaImage size={34} className="text-blue-500 group-hover:scale-110 transition mb-2" />
-              <span className="text-sm text-slate-300">Trage o imagine aici sau apasă pentru a încărca</span>
-              <input
-                id="upload-image"
-                type="file"
-                accept="image/*"
-                onChange={(e) => {
-                  setImageFile(e.target.files?.[0] || null);
-                  setOriginalPreview(e.target.files?.[0] ? URL.createObjectURL(e.target.files[0]) : null);
-                }}
-                className="hidden"
-              />
-              {originalPreview && (
-                <img src={originalPreview} alt="Previzualizare" className="absolute w-24 h-16 rounded-md shadow top-3 right-3 object-cover border-2 border-white" />
-              )}
-            </label>
+        {/* Generator Section */}
+        <section id="upload-section" className="py-20 px-4">
+          {errorMsg && (
+            <div className="max-w-4xl mx-auto mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-center gap-3">
+              <FaExclamationTriangle className="text-red-400" />
+              <span className="text-red-300">{errorMsg}</span>
+            </div>
+          )}
 
-            <button type="submit" disabled={loading} className={`w-full flex justify-center items-center gap-2 py-3 text-base font-semibold ${gradientBtn} ${rounded} hover:scale-105`}>
-              {loading ? <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <>Generează 3D + Video</>}
-            </button>
-          </form>
+          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12">
+            {/* Upload Form */}
+            <div className="space-y-8">
+              <div className="text-center lg:text-left">
+                <h2 className="text-4xl font-bold mb-4">
+                  <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                    Create Your 3D Magic
+                  </span>
+                </h2>
+                <p className="text-gray-400 text-lg">
+                  Drop your image below and let our AI work its magic
+                </p>
+              </div>
 
-          <section className={`${glass} ${border} ${rounded} p-8 shadow-2xl flex flex-col gap-6 min-h-[500px] relative`} id="preview">
-            <h2 className="text-2xl font-bold text-center bg-gradient-to-r from-blue-400 via-purple-400 to-purple-700 bg-clip-text text-transparent">Previzualizare</h2>
+              <form onSubmit={handleSubmit} className="space-y-6" noValidate>
 
-            {loading && <div className="text-center text-lg animate-pulse">⏳ Se generează rezultatul...</div>}
-
-            {!loading && originalPreview && videoUrl && (
-              <div className="relative w-full max-w-full mx-auto rounded-xl overflow-hidden shadow-lg select-none" style={{ height: 300 }} ref={containerRef}>
-                <img src={originalPreview} alt="Inițial" className="absolute inset-0 w-full h-full object-cover" />
-                <div className="absolute inset-0 overflow-hidden" style={{ width: `${reveal}%` }}>
-                  <video src={videoUrl} controls className="w-full h-full object-cover" poster={originalPreview || undefined} />
+                <div className="relative">
+                  <label
+                    htmlFor="upload-image"
+                    className="group relative block w-full h-64 border-2 border-dashed border-white/20 rounded-3xl cursor-pointer transition-all duration-300 hover:border-blue-500/50 hover:bg-blue-500/5"
+                  >
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      {originalPreview ? (
+                        <div className="relative">
+                          <img src={originalPreview} alt="Preview" className="w-48 h-32 object-cover rounded-2xl shadow-2xl" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-2xl" />
+                          <div className="absolute bottom-3 left-3 right-3 text-center">
+                            <p className="text-white text-sm font-medium">Click to change image</p>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                            <FaImage className="text-3xl text-blue-400" />
+                          </div>
+                          <h3 className="text-xl font-semibold text-white mb-2">Drop your image here</h3>
+                          <p className="text-gray-400 text-center max-w-xs">
+                            or click to browse • Supports JPG, PNG, WEBP up to 10MB
+                          </p>
+                        </>
+                      )}
+                    </div>
+                    <input
+                      id="upload-image"
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        setImageFile(e.target.files?.[0] || null);
+                        setOriginalPreview(e.target.files?.[0] ? URL.createObjectURL(e.target.files[0]) : null);
+                      }}
+                      className="hidden"
+                    />
+                  </label>
                 </div>
 
-                <div className="absolute top-0 bottom-0 border-l-2 border-white/70" style={{ left: `calc(${reveal}% - 1px)` }} />
-                <input type="range" min={0} max={100} value={reveal} onChange={(e) => setReveal(Number(e.target.value))} className="absolute left-0 right-0 bottom-2 mx-4" aria-label="Compară înainte/după" />
+                <button 
+                  type="submit" 
+                  disabled={loading || !imageFile}
+                  className="group relative w-full py-4 px-8 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-2xl font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="relative flex items-center justify-center gap-3">
+                    {loading ? (
+                      <>
+                        <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <span>Generating Magic...</span>
+                      </>
+                    ) : (
+                      <>
+                        <FaRocket className="group-hover:animate-bounce" />
+                        <span>Generate 3D Model</span>
+                      </>
+                    )}
+                  </div>
+                </button>
+              </form>
+            </div>
+
+            {/* Preview Section */}
+            <div className="space-y-8">
+              <div className="text-center lg:text-left">
+                <h2 className="text-4xl font-bold mb-4">
+                  <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                    Live Preview
+                  </span>
+                </h2>
+                <p className="text-gray-400 text-lg">
+                  Watch your creation come to life in real-time
+                </p>
               </div>
-            )}
 
-            {!loading && !videoUrl && originalPreview && <img src={originalPreview} alt="Imagine încărcată" className="w-full rounded-lg shadow-lg object-contain max-h-[480px]" />}
+              <div className="relative bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-xl border border-white/10 rounded-3xl p-8 min-h-[500px]">
+                {loading && (
+                  <div className="flex flex-col items-center justify-center h-full py-20">
+                    <div className="w-20 h-20 rounded-full border-4 border-blue-500/30 border-t-blue-500 animate-spin mb-6" />
+                    <h3 className="text-2xl font-bold text-white mb-2">Creating Magic</h3>
+                    <p className="text-gray-400">Our AI is transforming your image...</p>
+                    <div className="flex items-center gap-2 mt-4">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" />
+                      <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                      <div className="w-2 h-2 bg-pink-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+                    </div>
+                  </div>
+                )}
 
-            {videoUrl && (
-              <button onClick={() => window.open(videoUrl, "_blank", "noopener,noreferrer")} className="absolute top-6 right-10 z-20 flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-full shadow-lg transition" title="Descarcă video">
-                <FaDownload /> Descarcă video
-              </button>
-            )}
+                {!loading && originalPreview && videoUrl && (
+                  <div className="space-y-6">
+                    <div className="relative w-full h-80 rounded-2xl overflow-hidden shadow-2xl" ref={containerRef}>
+                      <img src={originalPreview} alt="Original" className="absolute inset-0 w-full h-full object-cover" />
+                      <div className="absolute inset-0 overflow-hidden transition-all duration-300" style={{ width: `${reveal}%` }}>
+                        <video src={videoUrl} controls className="w-full h-full object-cover" poster={originalPreview || undefined} />
+                      </div>
+                      <div className="absolute top-0 bottom-0 w-1 bg-white/80 shadow-lg" style={{ left: `calc(${reveal}% - 2px)` }} />
+                      <input 
+                        type="range" 
+                        min={0} 
+                        max={100} 
+                        value={reveal} 
+                        onChange={(e) => setReveal(Number(e.target.value))} 
+                        className="absolute bottom-4 left-4 right-4 h-2 bg-white/20 rounded-full appearance-none cursor-pointer"
+                      />
+                    </div>
+                    <div className="flex gap-4">
+                      <button 
+                        onClick={() => window.open(videoUrl, "_blank")} 
+                        className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2"
+                      >
+                        <FaDownload /> Download Video
+                      </button>
+                      {modelUrl && (
+                        <button 
+                          onClick={() => window.open(modelUrl, "_blank")} 
+                          className="flex-1 px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2"
+                        >
+                          <FaDownload /> Download 3D Model
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
 
-            {!loading && modelUrl && (
-              <div className="mt-6">
-                <ModelViewer url={modelUrl} />
+                {!loading && !videoUrl && originalPreview && (
+                  <div className="flex flex-col items-center justify-center h-full py-20">
+                    <img src={originalPreview} alt="Uploaded" className="w-64 h-48 object-cover rounded-2xl shadow-2xl mb-6" />
+                    <h3 className="text-xl font-semibold text-white mb-2">Ready for Generation</h3>
+                    <p className="text-gray-400">Click the generate button to create your 3D model</p>
+                  </div>
+                )}
+
+                {!loading && !originalPreview && (
+                  <div className="flex flex-col items-center justify-center h-full py-20">
+                    <div className="w-24 h-24 rounded-full border-4 border-dashed border-gray-600 flex items-center justify-center mb-6">
+                      <FaImage className="text-4xl text-gray-500" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-white mb-2">Upload an Image</h3>
+                    <p className="text-gray-400">Your generated content will appear here</p>
+                  </div>
+                )}
+
+                {!loading && modelUrl && (
+                  <div className="mt-8">
+                    <h3 className="text-lg font-semibold text-white mb-4">3D Model Preview</h3>
+                    <div className="bg-black/30 rounded-2xl overflow-hidden">
+                      <ModelViewer url={modelUrl} />
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
-          </section>
-        </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section id="features" className="py-20 px-4 relative">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-500/5 to-transparent" />
+          <div className="relative max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-5xl font-bold mb-6">
+                <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                  Powerful Features
+                </span>
+              </h2>
+              <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+                Everything you need to create stunning 3D content from simple images
+              </p>
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-8">
+              <div className="group p-8 bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-xl border border-white/10 rounded-3xl hover:border-blue-500/30 transition-all duration-300 hover:scale-105">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500/20 to-blue-600/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <FaRocket className="text-3xl text-blue-400" />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-4">Lightning Fast</h3>
+                <p className="text-gray-400 leading-relaxed">Generate 3D models and videos in under 60 seconds with our optimized AI pipeline.</p>
+              </div>
+              
+              <div className="group p-8 bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-xl border border-white/10 rounded-3xl hover:border-purple-500/30 transition-all duration-300 hover:scale-105">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/20 to-purple-600/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <FaCube className="text-3xl text-purple-400" />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-4">High Quality</h3>
+                <p className="text-gray-400 leading-relaxed">State-of-the-art AI models ensure photorealistic 3D outputs with incredible detail.</p>
+              </div>
+              
+              <div className="group p-8 bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-xl border border-white/10 rounded-3xl hover:border-pink-500/30 transition-all duration-300 hover:scale-105">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500/20 to-pink-600/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <FaCog className="text-3xl text-pink-400" />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-4">Easy to Use</h3>
+                <p className="text-gray-400 leading-relaxed">No technical skills required. Just upload, click generate, and watch the magic happen.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Pricing Section */}
+        <section id="pricing" className="py-20 px-4">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-5xl font-bold mb-6">
+                <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                  Simple Pricing
+                </span>
+              </h2>
+              <p className="text-xl text-gray-400">
+                Pay only for what you create. No monthly fees.
+              </p>
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+              <div className="p-8 bg-gradient-to-br from-gray-900/30 to-black/30 backdrop-blur-xl border border-white/10 rounded-3xl">
+                <h3 className="text-2xl font-bold text-white mb-2">Starter</h3>
+                <div className="text-4xl font-bold text-blue-400 mb-6">
+                  $9 <span className="text-lg text-gray-400">/ 10 credits</span>
+                </div>
+                <ul className="space-y-3 text-gray-300 mb-8">
+                  <li>✓ 10 3D Generations</li>
+                  <li>✓ HD Video Output</li>
+                  <li>✓ Standard Processing</li>
+                  <li>✓ Download Rights</li>
+                </ul>
+                <button className="w-full py-3 px-6 bg-blue-600 hover:bg-blue-700 rounded-xl font-semibold transition-colors">
+                  Get Started
+                </button>
+              </div>
+              
+              <div className="relative p-8 bg-gradient-to-br from-purple-900/50 to-pink-900/30 backdrop-blur-xl border-2 border-purple-500/50 rounded-3xl transform scale-105">
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full text-sm font-bold">
+                  Most Popular
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-2">Professional</h3>
+                <div className="text-4xl font-bold text-purple-400 mb-6">
+                  $29 <span className="text-lg text-gray-400">/ 50 credits</span>
+                </div>
+                <ul className="space-y-3 text-gray-300 mb-8">
+                  <li>✓ 50 3D Generations</li>
+                  <li>✓ 4K Video Output</li>
+                  <li>✓ Priority Processing</li>
+                  <li>✓ Commercial License</li>
+                  <li>✓ Email Support</li>
+                </ul>
+                <button className="w-full py-3 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-xl font-semibold transition-all">
+                  Choose Pro
+                </button>
+              </div>
+              
+              <div className="p-8 bg-gradient-to-br from-gray-900/30 to-black/30 backdrop-blur-xl border border-white/10 rounded-3xl">
+                <h3 className="text-2xl font-bold text-white mb-2">Enterprise</h3>
+                <div className="text-4xl font-bold text-pink-400 mb-6">
+                  $99 <span className="text-lg text-gray-400">/ 250 credits</span>
+                </div>
+                <ul className="space-y-3 text-gray-300 mb-8">
+                  <li>✓ 250 3D Generations</li>
+                  <li>✓ 8K Video Output</li>
+                  <li>✓ Instant Processing</li>
+                  <li>✓ API Access</li>
+                  <li>✓ Priority Support</li>
+                </ul>
+                <button className="w-full py-3 px-6 bg-pink-600 hover:bg-pink-700 rounded-xl font-semibold transition-colors">
+                  Go Enterprise
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
 
         {history.length > 0 && (
           <section className={`${glass} ${border} ${rounded} max-w-6xl mx-auto mt-12 p-7 shadow-2xl`} id="istoric">
