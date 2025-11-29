@@ -15,7 +15,15 @@ model User {
   passwordHash       String
   createdAt          DateTime @default(now())
   emailVerified      DateTime?
-  // opțional: alte câmpuri (credits, avatar, etc.)
+  credits            Int      @default(10) // Start with 10 free credits
+  totalCreditsUsed   Int      @default(0)
+  subscriptionTier   String   @default("FREE") // FREE, BASIC, PRO, PREMIUM
+  lastCreditRefill   DateTime @default(now())
+  
+  // Relations
+  generations        Generation[]
+  creditTransactions CreditTransaction[]
+  purchases          Purchase[]
 }
 
 model VerificationToken {
@@ -38,4 +46,73 @@ model PasswordResetToken {
 
   @@index([identifier])
   @@index([token])
+}
+
+model Generation {
+  id               String   @id @default(cuid())
+  userId           String
+  originalImageUrl String
+  prompt           String?
+  videoUrl         String?
+  modelUrl         String?
+  status           String   @default("PENDING") // PENDING, PROCESSING, COMPLETED, FAILED
+  creditsCost      Int      @default(1)
+  processingTime   Int?     // in seconds
+  quality          String   @default("STANDARD") // STANDARD, HIGH, ULTRA
+  createdAt        DateTime @default(now())
+  completedAt      DateTime?
+  errorMessage     String?
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model CreditTransaction {
+  id          String   @id @default(cuid())
+  userId      String
+  amount      Int      // positive for add, negative for use
+  type        String   // PURCHASE, GENERATION_USE, REFUND, BONUS
+  description String
+  createdAt   DateTime @default(now())
+  purchaseId  String?  // Reference to purchase if applicable
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([type])
+  @@index([createdAt])
+}
+
+model Purchase {
+  id              String   @id @default(cuid())
+  userId          String
+  stripeSessionId String?  @unique
+  amount          Float    // price in RON/EUR
+  credits         Int      // credits purchased
+  status          String   @default("PENDING") // PENDING, COMPLETED, FAILED, REFUNDED
+  currency        String   @default("RON")
+  createdAt       DateTime @default(now())
+  completedAt     DateTime?
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([stripeSessionId])
+  @@index([status])
+}
+
+model CreditPackage {
+  id          String  @id @default(cuid())
+  name        String
+  credits     Int
+  price       Float   // in RON/EUR
+  currency    String  @default("RON")
+  popular     Boolean @default(false)
+  bonus       Int     @default(0) // extra credits as bonus
+  active      Boolean @default(true)
+  
+  @@unique([credits, price])
 }
