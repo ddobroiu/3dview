@@ -603,7 +603,7 @@ export default function Dashboard() {
                 </button>
               </div>
               <div className="h-96">
-                <ModelViewer modelUrl={modalModel} />
+                <ModelViewer url={modalModel} />
               </div>
               <div className="mt-4 flex space-x-4">
                 <a 

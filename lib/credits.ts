@@ -232,7 +232,7 @@ export async function getGenerationHistory(
   total: number;
 }> {
   try {
-    const [generations, total] = await Promise.all([
+    const [generationsRaw, total] = await Promise.all([
       prisma.generation.findMany({
         where: { userId },
         orderBy: { createdAt: 'desc' },
@@ -256,6 +256,16 @@ export async function getGenerationHistory(
         where: { userId },
       }),
     ]);
+
+    // Transform null to undefined for TypeScript compatibility
+    const generations = generationsRaw.map(gen => ({
+      ...gen,
+      prompt: gen.prompt || undefined,
+      videoUrl: gen.videoUrl || undefined,
+      modelUrl: gen.modelUrl || undefined,
+      completedAt: gen.completedAt || undefined,
+      processingTime: gen.processingTime || undefined,
+    }));
 
     return { generations, total };
   } catch (error) {
