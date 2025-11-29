@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -55,6 +55,7 @@ export default function Dashboard() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
   const [selectedQuality, setSelectedQuality] = useState<'STANDARD' | 'HIGH' | 'ULTRA'>('STANDARD');
+  const [selectedProvider, setSelectedProvider] = useState<'meshy' | 'luma' | 'tripo' | 'stability'>('meshy');
   const [prompt, setPrompt] = useState('');
   const [activeTab, setActiveTab] = useState<'upload' | 'history' | 'credits'>('upload');
   const [modalModel, setModalModel] = useState<string | null>(null);
@@ -142,6 +143,7 @@ export default function Dashboard() {
   };
 
   const handleGenerate = async () => {
+    const qualityOptions = getQualityOptions(selectedProvider);
     if (!selectedImage || !userData || userData.credits < qualityOptions[selectedQuality].credits) {
       return;
     }
@@ -174,6 +176,7 @@ export default function Dashboard() {
           imageUrl,
           prompt,
           quality: selectedQuality,
+          provider: selectedProvider,
         }),
       });
 
@@ -356,10 +359,38 @@ export default function Dashboard() {
 
                     <div className="mb-6">
                       <label className="block text-sm font-medium mb-2">
+                        AI Provider
+                      </label>
+                      <div className="grid grid-cols-2 gap-2 mb-4">
+                        {Object.entries(aiProviders).map(([key, provider]) => (
+                          <label key={key} className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="provider"
+                              value={key}
+                              checked={selectedProvider === key}
+                              onChange={(e) => setSelectedProvider(e.target.value as any)}
+                              disabled={generating}
+                              className="text-blue-600"
+                            />
+                            <div className="flex-1">
+                              <div className="flex items-center space-x-2">
+                                <span className="text-lg">{provider.logo}</span>
+                                <span className="font-medium">{provider.name}</span>
+                              </div>
+                              <p className="text-xs text-gray-500">{provider.description}</p>
+                            </div>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="mb-6">
+                      <label className="block text-sm font-medium mb-2">
                         Calitate
                       </label>
                       <div className="space-y-2">
-                        {Object.entries(qualityOptions).map(([key, option]) => (
+                        {Object.entries(getQualityOptions(selectedProvider)).map(([key, option]) => (
                           <label key={key} className="flex items-center space-x-3">
                             <input
                               type="radio"
@@ -394,7 +425,7 @@ export default function Dashboard() {
                       disabled={
                         generating || 
                         !selectedImage || 
-                        userData.credits < qualityOptions[selectedQuality].credits
+                        userData.credits < getQualityOptions(selectedProvider)[selectedQuality].credits
                       }
                       className="w-full bg-gradient-to-r from-blue-600 to-purple-700 hover:from-blue-700 hover:to-purple-800 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white py-3 px-6 rounded-xl font-semibold transition-all duration-200"
                     >
@@ -404,7 +435,7 @@ export default function Dashboard() {
                           <span>Generez model 3D...</span>
                         </div>
                       ) : (
-                        `Generează pentru ${qualityOptions[selectedQuality].credits} ${qualityOptions[selectedQuality].credits === 1 ? 'credit' : 'credite'}`
+                        `Generează pentru ${getQualityOptions(selectedProvider)[selectedQuality].credits} ${getQualityOptions(selectedProvider)[selectedQuality].credits === 1 ? 'credit' : 'credite'}`
                       )}
                     </button>
                   </div>

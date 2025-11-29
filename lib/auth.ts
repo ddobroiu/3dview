@@ -1,7 +1,7 @@
 // lib/auth.ts
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET || "dev_secret_change_me";
+const JWT_SECRET: string = process.env.JWT_SECRET || "dev_secret_change_me";
 
 export type JWTPayload = {
   id: string;
@@ -9,13 +9,14 @@ export type JWTPayload = {
   email: string;
 };
 
-export function signToken(payload: JWTPayload, expiresIn = "7d") {
+export function signToken(payload: JWTPayload, expiresIn: string | number = "7d"): string {
   return jwt.sign(payload, JWT_SECRET, { expiresIn });
 }
 
 export function verifyToken(token: string): JWTPayload | null {
   try {
-    return jwt.verify(token, JWT_SECRET) as JWTPayload;
+    const decoded = jwt.verify(token, JWT_SECRET);
+    return decoded as JWTPayload;
   } catch {
     return null;
   }

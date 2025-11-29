@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import { FaUpload, FaImage, FaTimes, FaCoins, FaCreditCard } from "react-icons/fa";
 
 interface ImageUploaderProps {
@@ -46,7 +46,7 @@ export default function ImageUploader({
     setIsDragging(false);
 
     const files = Array.from(e.dataTransfer.files);
-    const imageFile = files.find(file => file.type.startsWith('image/'));
+    const imageFile = files.find((file: File) => file.type.startsWith('image/'));
     
     if (imageFile) {
       handleFileSelect(imageFile);
