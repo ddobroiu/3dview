@@ -77,7 +77,7 @@ export default function Header() {
               <Link href="#features" className="px-4 py-2 rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-all duration-200 font-medium">
                 Features
               </Link>
-              <Link href="#pricing" className="px-4 py-2 rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-all duration-200 font-medium">
+              <Link href="/purchase-credits" className="px-4 py-2 rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-all duration-200 font-medium">
                 Pricing
               </Link>
               {user && (
@@ -146,7 +146,7 @@ export default function Header() {
               <Link href="#features" className="px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-all" onClick={() => setMobileMenuOpen(false)}>
                 Features
               </Link>
-              <Link href="#pricing" className="px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-all" onClick={() => setMobileMenuOpen(false)}>
+              <Link href="/purchase-credits" className="px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-all" onClick={() => setMobileMenuOpen(false)}>
                 Pricing
               </Link>
               {user && (
